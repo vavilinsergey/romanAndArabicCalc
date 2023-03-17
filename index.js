@@ -1,6 +1,7 @@
-const string = 'I + I';//это то, что передаст тест в общую функцию
-let inputString = string.replace(/\s/g, "");//костыль, который убирает из строки все пробелы, потому что я забыл об этом и тестил на примерах вида 1+1
-const alphabetRomanArabic = new Map([
+const string = 'I + I'// тут можно задать входное значение для вычисления
+
+  let inputString = string.replace(/\s/g, "");//костыль, который убирает из строки все пробелы, потому что я забыл об этом и тестил на примерах вида 1+1
+  const alphabetRomanArabic = new Map([
   ['C', 100],
   ['XC', 90],
   ['L', 50],
@@ -12,10 +13,10 @@ const alphabetRomanArabic = new Map([
   ['I', 1]
 ]);//алфавит
 
-const mainRegex = /^([1-9]|10)\s*[\+\-\*\/]\s*([1-9]|10)$/;
-//регулярка для проверки араб-символ-араб, операнды макс 10
+  const mainRegex = /^([1-9]|10)\s*[\+\-\*\/]\s*([1-9]|10)$/;
+//регулярка для проверки формы мат. выражения на араб-символ-араб, операнды макс 10, отфильтрует выражения с несколькими операторами, отрицательные числа и нули
 
-function isArabicOrRoman(str) {
+  function isArabicOrRoman(str) {
   if (/^[\d+\-*/.\s]+$/.test(str)) {
     return 'arabic';    
   } else if (/^[IVX+\-*/.\s]+$/i.test(str)) {
@@ -25,14 +26,14 @@ function isArabicOrRoman(str) {
   }
 } //определяет арабская или римская строка (пробелы и математические операторы не в счет)
 
-switch (isArabicOrRoman(inputString)){
+  switch (isArabicOrRoman(inputString)){
 //Main switch, разделяем вычисления в зависимости от типа строки, чтобы знать в каком виде давать результат
     case 'arabic':
       if (mainRegex.test(inputString)) {//тестирует через mainRegex
         const result = eval(inputString);
         console.log(Math.floor(result)); // округляет через floor
       } else {
-        console.log('error arabic wrong main regex');
+        throw new Error('error arabic wrong main regex');
       }
       break;
       
@@ -72,8 +73,8 @@ switch (isArabicOrRoman(inputString)){
             num -= arabicValue;
           }
         }
-        return roman;
-        }// принимает арабское число и возвращает римское, если меньше или равно 0 - возвращает пустую строку
+        return roman.toString();
+        }// принимает арабское число и возвращает римское строкой, если меньше или равно 0 - возвращает пустую строку
 
       function mainLogic (string) {
         const splitString = string.split(/([-/*+])/);//разбил на операнды
@@ -83,80 +84,34 @@ switch (isArabicOrRoman(inputString)){
            const mathResult = eval(stringToCalc);//результат вычислений дробный
            result = Math.floor(mathResult); // финальный результат вычислений
         } else {
-           return 'error romanian wrong main regex';
+          throw new Error('error romanian wrong main regex');
         }   
         return arabicToRoman(result);//пропустим через функцию обратной конвертации в римские
       }// собирает остальные функции 
       
       console.log(mainLogic(inputString));//выводим результат работы ветки
-      
-      /*function convertToArabic(string) {
-        const splitString = string.split(/([-/*+])/); // Используем регулярное выражение, чтобы разделить строку по символам -/*+
-        const convertedToArabic = splitString.map(char => {
-          if (Object.keys(romanToArabicAlphabet).includes(char)) {
-            return romanToArabicAlphabet[char];
-          } else {
-            return char;
-          }
-        }).join(''); 
-        return convertedToArabic;
-      };*/// старая функция преобразования римских в арабские      
-      
-      /*function convertToRomanian(string) {
-        const splitString = inputString.split('');
-        const convertedToRomanian = splitString.map(char => {
-          if (Object.values(romanToArabicAlphabet).includes(char)) {
-            return Object.keys(romanToArabicAlphabet).find(key => romanToArabicAlphabet[key] === char);
-          } else {
-            return char;
-          }
-        }).join('');
-        return convertedToRomanian;
-      }
-      console.log(convertToRomanian(inputString));*///старая функция преобразования арабских в римские
-      
-      //let convertedToArabic = convertToArabic(inputString);
-      //console.log(convertedToArabic+'конвертировали в арабские');
-
-      /*function isMoreOrEqualZero(number) {
-        if (mainRegex.test(number)) {
-          const result = eval(number);
-          return Math.floor(result);
-          console.log(Math.floor(result)); //округление вниз
-        } else {
-          return ('error arabic more then 10');
-        }
-      };//функция проверяет меньше или равно нулю арабское число, если да - возвращает ноль, а так же вычисляет значение и возвращает результат округленный до целого*///    устаревшая функция, реализовал проверку внутри arabicToRoman
-      
-      /*console.log(isMoreOrEqualZero(convertedToArabic)+'проверили меньше ли нуля');
-      let result = (isMoreOrEqualZero(convertedToArabic));
-      let resultInRomanian = convertToRomanian(result);
-      console.log(resultInRomanian + 'обратно в римские');*/
-      
-      /*if (mainRegex.test(convertedToArabic)) {
-        const result = eval(convertedToArabic);
-        console.log(result); // допилить округление
-      } else {
-        console.log('error arabic more then 10');
-      };     
-      if ()*/
       break;
       
     default://если смешанные и вычислять дальше нет смысла
-      console.log('error mixed numbers');      
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      throw new Error('error mixed numbers');     
+  } 
+/*
+План v3:
+  Проверяем строку на арабскую, римскую и смешанную регуляркой DONE
+    Main Switch:
+      Смешанные: 
+        - Еррор
+      Арабские:
+        - Проверяем выражение на корректность с помощью регулярки
+         - нет? эррор
+        - Вычисляем
+        - Округляем
+        - Выводим
+      Римские:
+        - Разбиваю строку на массив, разделитель - знаки -+/*, сделал потому, что не мог реализовать римск->арабск вместе с символами
+        - Проходим по значениям массива отличных от -+/* с помощью функции, которая переводит из Римских в арабские, подготавливая для вычислений
+        - Проверяем через mainRegex
+          - нет? эррор
+        - Вычисляем, округляем
+        - Переводим обратно в Римские, проверив число на <=0
+*/          
