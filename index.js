@@ -1,4 +1,5 @@
-const inputString = '1 + 1';
+const string = 'I + I';//это то, что передаст тест в общую функцию
+let inputString = string.replace(/\s/g, "");//костыль, который убирает из строки все пробелы, потому что я забыл об этом и тестил на примерах вида 1+1
 const alphabetRomanArabic = new Map([
   ['C', 100],
   ['XC', 90],
